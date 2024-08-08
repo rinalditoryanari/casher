@@ -19,8 +19,6 @@ class TableSeeder extends Seeder
             ['name' => 'Meja 3'],
         ];
 
-        foreach ($tables as $table) {
-            Table::create($table);
-        }
+        Table::insert($tables);
     }
 }

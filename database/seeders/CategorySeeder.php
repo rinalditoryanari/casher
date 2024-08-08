@@ -14,6 +14,6 @@ class CategorySeeder extends Seeder
             ['name' => 'food', 'promo' => false],
             ['name' => 'promo', 'promo' => true],
         ];
-        Category::createMany($categories);
+        Category::insert($categories);
     }
 }

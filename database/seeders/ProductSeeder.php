@@ -15,20 +15,20 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $products = [
-            ['name' => 'Jeruk Dingin', 'price' => 12000, 'id_catagory' => 1],
-            ['name' => 'Jeruk Panas', 'price' => 10000, 'id_catagory' => 1],
-            ['name' => 'Teh Manis', 'price' => 8000, 'id_catagory' => 1],
-            ['name' => 'Teh Tawar', 'price' => 5000, 'id_catagory' => 1],
-            ['name' => 'Kopi Dingin', 'price' => 8000, 'id_catagory' => 1],
-            ['name' => 'Kopi Panas', 'price' => 6000, 'id_catagory' => 1],
-            ['name' => 'Extra Es Batu', 'price' => 2000, 'id_catagory' => 1],
+            ['name' => 'Jeruk Dingin', 'price' => 12000, 'id_category' => 1],
+            ['name' => 'Jeruk Panas', 'price' => 10000, 'id_category' => 1],
+            ['name' => 'Teh Manis', 'price' => 8000, 'id_category' => 1],
+            ['name' => 'Teh Tawar', 'price' => 5000, 'id_category' => 1],
+            ['name' => 'Kopi Dingin', 'price' => 8000, 'id_category' => 1],
+            ['name' => 'Kopi Panas', 'price' => 6000, 'id_category' => 1],
+            ['name' => 'Extra Es Batu', 'price' => 2000, 'id_category' => 1],
 
-            ['name' => 'Mie Goreng', 'price' => 15000, 'id_catagory' => 2],
-            ['name' => 'Mie Kuah', 'price' => 15000, 'id_catagory' => 2],
-            ['name' => 'Nasi Goreng', 'price' => 15000, 'id_catagory' => 2],
+            ['name' => 'Mie Goreng', 'price' => 15000, 'id_category' => 2],
+            ['name' => 'Mie Kuah', 'price' => 15000, 'id_category' => 2],
+            ['name' => 'Nasi Goreng', 'price' => 15000, 'id_category' => 2],
 
         ];
 
-        Product::createMany($products);
+        Product::insert($products);
     }
 }

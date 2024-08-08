@@ -15,6 +15,6 @@ class PrinterSeeder extends Seeder
             ['name' => 'Printer C (Dapur)', 'id_category' => 2, 'bill' => false],
         ];
 
-        Printer::crateMany($printers);
+        Printer::insert($printers);
     }
 }
