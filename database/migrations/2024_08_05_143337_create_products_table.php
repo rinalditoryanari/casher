@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->bigInteger('price');
-            // $table->foreignId('id_type');
-            $table->enum('type', ['drink', 'food', 'promo']);
+             $table->foreignId('id_category')->constrained('categories');
             $table->timestamps();
         });
     }

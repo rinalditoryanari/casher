@@ -14,8 +14,8 @@ return new class extends Migration
     {
         Schema::create('promos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_promo');
-            $table->foreignId('id_product');
+            $table->foreignId('id_promo')->constrained('products');
+            $table->foreignId('id_product')->constrained('products');
             $table->integer('quantity');
             $table->timestamps();
         });

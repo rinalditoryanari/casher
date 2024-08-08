@@ -18,7 +18,7 @@ class PromoSeeder extends Seeder
             [
                 'name' => 'Nasi Goreng + Jeruk',
                 'price' => 23000,
-                'type' => 'promo',
+                'id_category' => 3,
                 'product' => [
                     ['name' => 'Nasi Goreng', 'quantity' => 1],
                     ['name' => 'Jeruk Dingin', 'quantity' => 1]
@@ -33,7 +33,7 @@ class PromoSeeder extends Seeder
             $listed_promo = new Product();
             $listed_promo->name = $promo['name'];
             $listed_promo->price = $promo['price'];
-            $listed_promo->type = $promo['type'];
+            $listed_promo->id_category = $promo['id_category'];
             $listed_promo->save();
 
             foreach ($promo['product'] as $product) {
