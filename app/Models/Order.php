@@ -14,8 +14,7 @@ class Order extends Model
     /**
      * @var float|int|mixed
      */
-    public mixed $total_price;
-    public mixed $id_table;
+
     protected $fillable = ['id_table', 'total_price'];
 
 
@@ -24,7 +23,7 @@ class Order extends Model
         return $this->belongsTo(Table::class, 'id_table');
     }
 
-    public function orderDetails(): HasMany
+    public function order_detail(): HasMany
     {
         return $this->hasMany(OrderDetail::class, 'id_order');
     }

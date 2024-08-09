@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Printer;
-use Illuminate\Http\Request;
 
 class PrinterController extends Controller
 {
@@ -12,39 +12,8 @@ class PrinterController extends Controller
         return Printer::all();
     }
 
-    public function store(Request $request)
+    public function print_order(Order $orders)
     {
-        $data = $request->validate([
-            'name' => ['required'],
-            'category_id' => ['required', 'exists:categories'],
-            'promo' => ['boolean'],
-        ]);
-
-        return Printer::create($data);
-    }
-
-    public function show(Printer $printer)
-    {
-        return $printer;
-    }
-
-    public function update(Request $request, Printer $printer)
-    {
-        $data = $request->validate([
-            'name' => ['required'],
-            'category_id' => ['required', 'exists:categories'],
-            'promo' => ['boolean'],
-        ]);
-
-        $printer->update($data);
-
-        return $printer;
-    }
-
-    public function destroy(Printer $printer)
-    {
-        $printer->delete();
-
-        return response()->json();
+        dd($orders);
     }
 }

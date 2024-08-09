@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\OrderRequest;
 use App\Models\Order;
-use App\Models\OrderDetail;
 use App\Models\Product;
+use App\Models\Table;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -25,16 +24,21 @@ class OrderController extends Controller
     public function create(OrderRequest $request)
     {
         try {
-            //Assign Value
-            $id_table = $request['id_table'];
-            $ongoing_order = $request['order'];
+        //Assign Value
+        $table = Table::find((int)$request['id_table']);
+        $ongoing_order = $request['order'];
 
-            $orders = $this->create($id_table, $ongoing_order);
+        $orders = $this->store($table, $ongoing_order);
 
-            OrderDetailController::store($orders->id, $ongoing_order);
+        $orderDetailController = new OrderDetailController();
+        $orderDetailController->store($orders, $ongoing_order);
 
-            dd($ongoing_order);
-        } catch (\Throwable $th){
+        PrinterController::print_order($orders);
+
+        dd($orders);
+
+
+        } catch (\Throwable $th) {
             return response()->json([
                 'error' => $th->getMessage(),
                 'status' => 402,
@@ -46,24 +50,21 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store($id_table, $ongoing_order)
+    public function store(Table $table, $ongoing_order)
     {
-        //Check and Calculate The Prices
+        // Check and Calculate The Prices
         $total_price = 0;
-
         foreach ($ongoing_order as $i => $order_product) {
-            $price_item = Product::find($order_product['id_product'])->price;
+            $product = Product::find($order_product['id_product']);
+            $price_item = $product->price;
             $price = $price_item * $order_product['quantity'];
 
-            $ongoing_order[$i]['price_per_item'] = $price;
+            $ongoing_order[$i]['price_per_item'] = $price_item;
             $total_price += $price;
         }
 
-        $orders = new Order();
-        $orders->id_table = $id_table;
-        $orders->total_price = $total_price;
-//            $orders->save();
-        dd($orders);
+        $orders = new Order(['total_price' => $total_price]);
+        $table->order()->save($orders);
 
         return $orders;
     }
