@@ -10,67 +10,63 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(OrderRequest $request)
     {
         try {
-            //Assign Value
-            $table = Table::find((int)$request['id_table']);
-            $ongoing_order = $request['order'];
-
-            $orders = $this->store($table, $ongoing_order);
-
-            $orderDetailController = new OrderDetailController();
-            $orderDetailController->store($orders, $ongoing_order);
+            $orders = Order::find(26);
 
             $printerController = new PrinterController();
             $response = $printerController->orderResponse($orders);
 
             return response()->json([
-                'message'   => 'Order Succesfull',
-                'data'      => $response,
-                'status'    => 201,
-            ]);
+                'message' => 'Order Succesfull',
+                'status' => 'success',
+                'id_order' => $orders->id,
+                'total_prize' => $orders->total_price,
+                'printer_task' => $response,
+            ], 201);
 
         } catch (\Throwable $th) {
             return response()->json([
-                'message'=> 'Error Occured',
-                'error'  => $th->getMessage(),
-                'status' => 402,
-            ]);
+                'message' => 'Error Occured',
+                'error' => $th->getMessage(),
+                'status' => 'error',
+            ], 402);
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Table $table, $ongoing_order)
     {
-        // Check and Calculate The Prices
-        $total_price = 0;
+        // List The Product
+        $products = [];
         foreach ($ongoing_order as $i => $order_product) {
             $product = Product::find($order_product['id_product']);
-            $price_item = $product->price;
-            $price = $price_item * $order_product['quantity'];
-
-            $ongoing_order[$i]['price_per_item'] = $price_item;
-            $total_price += $price;
+            $product->quantity = $order_product['quantity'];
+            $products[] = $product;
         }
 
-        $orders = new Order(['total_price' => $total_price]);
+        $calculate = $this->calculatePrize($products);
+
+        //Save the order and total prize
+        $orders = new Order(['total_price' => $calculate['total_price']]);
         $table->order()->save($orders);
 
         return $orders;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function calculatePrize($products)
     {
-        //
+        $total_price = 0;
+        foreach ($products as $i => $product) {
+            $product->prices = $product->price * $product->quantity;
+            $total_price += $product->prices;
+        }
+        $calculate = [
+            'total_price' => $total_price,
+            'products' => $products
+        ];
+
+        return $calculate;
     }
 
     /**

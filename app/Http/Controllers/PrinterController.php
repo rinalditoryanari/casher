@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\Order;
 use App\Models\Printer;
 
@@ -36,7 +35,6 @@ class PrinterController extends Controller
                 ],
                 'content' => [
                     'table' => $order->table->name,
-                    'id_orders' => $order->id,
                     'orders' => [],
                 ],
             ];
