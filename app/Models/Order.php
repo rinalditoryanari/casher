@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,6 +14,40 @@ class Order extends Model
 
     protected $fillable = ['id_table', 'total_price'];
 
+
+    public function getNonPromoProduct()
+    {
+        $id_category = Category::where('promo', true)->first()->id;
+        $nonpromos = $this->order_detail->filter(function ($orderDetail) use ($id_category) {
+            return $orderDetail->product->id_category != $id_category;
+        });
+
+        $edible = [];
+        foreach ($nonpromos as $nonpromo) {
+            $product = $nonpromo->product;
+            $product->quantity = $nonpromo->quantity;
+            $edible[] = $product;
+        }
+
+        return $edible;
+    }
+
+    public function getPromoProduct()
+    {
+        $id_category = Category::where('promo', true)->first()->id;
+        $promos = $this->order_detail->filter(function ($orderDetail) use ($id_category) {
+            return $orderDetail->product->id_category == $id_category;
+        })->load('product.promo', 'product.promo.detail');
+
+        $edible = [];
+        foreach ($promos as $promo) {
+            foreach ($promo->product->promo as $product) {
+                $product->detail->quantity = $product->quantity * $promo->quantity;
+                $edible[] = $product->detail;
+            }
+        }
+        return $edible;
+    }
 
     public function table(): BelongsTo
     {

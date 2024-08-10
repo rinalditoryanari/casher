@@ -13,8 +13,8 @@ class Promo extends Model
         'id_promo', 'id_product', 'quantity'
     ];
 
-    public function product()
+    public function detail()
     {
-        $this->belongsTo(Product::class, 'id_product');
+        return $this->belongsTo(Product::class, 'id_product');
     }
 }

@@ -11,41 +11,37 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create(OrderRequest $request)
     {
         try {
-        //Assign Value
-        $table = Table::find((int)$request['id_table']);
-        $ongoing_order = $request['order'];
+            //Assign Value
+            $table = Table::find((int)$request['id_table']);
+            $ongoing_order = $request['order'];
 
-        $orders = $this->store($table, $ongoing_order);
+            $orders = $this->store($table, $ongoing_order);
 
-        $orderDetailController = new OrderDetailController();
-        $orderDetailController->store($orders, $ongoing_order);
+            $orderDetailController = new OrderDetailController();
+            $orderDetailController->store($orders, $ongoing_order);
 
-        PrinterController::print_order($orders);
+            $printerController = new PrinterController();
+            $response = $printerController->orderResponse($orders);
 
-        dd($orders);
-
+            return response()->json([
+                'message'   => 'Order Succesfull',
+                'data'      => $response,
+                'status'    => 201,
+            ]);
 
         } catch (\Throwable $th) {
             return response()->json([
-                'error' => $th->getMessage(),
+                'message'=> 'Error Occured',
+                'error'  => $th->getMessage(),
                 'status' => 402,
             ]);
         }
     }
-
 
     /**
      * Store a newly created resource in storage.
@@ -67,6 +63,14 @@ class OrderController extends Controller
         $table->order()->save($orders);
 
         return $orders;
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
     }
 
     /**
