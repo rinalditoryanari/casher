@@ -15,6 +15,20 @@ class Order extends Model
     protected $fillable = ['id_table', 'total_price'];
 
 
+    public function getAllProduct()
+    {
+        $details = $this->order_detail;
+
+        $edible = [];
+        foreach ($details as $nonpromo) {
+            $product = $nonpromo->product;
+            $product->quantity = $nonpromo->quantity;
+            $edible[] = $product;
+        }
+
+        return $edible;
+    }
+
     public function getNonPromoProduct()
     {
         $id_category = Category::where('promo', true)->first()->id;

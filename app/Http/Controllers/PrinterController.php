@@ -17,7 +17,7 @@ class PrinterController extends Controller
         $response = $this->structureOrder($response, $edible);
 
         $promos = $orders->getPromoProduct();
-        $response = $this->structureOrdera($response, $promos);
+        $response = $this->structureOrder($response, $promos);
 
         return $response;
     }
@@ -49,26 +49,6 @@ class PrinterController extends Controller
             $search_field = array_column(array_column($response, 'printer'), 'category');
             $index_category = array_search($order->id_category, $search_field);
 
-            $index_content = array_search($order->name, $response[$index_category]['content']['orders']);
-
-            if ($index_content == false) {
-                $response[$index_category]['content']['orders'][] = [
-                    'name' => $order->name,
-                    'quantity' => $order->quantity,
-                ];
-            } else {
-                $response[$index_category]['content']['orders'][$index_content]['quantity'] += $order->quantity;
-            }
-        }
-        return $response;
-    }
-
-    public function structureOrdera($response, $orders)
-    {
-        foreach ($orders as $order) {
-            $search_field = array_column(array_column($response, 'printer'), 'category');
-            $index_category = array_search($order->id_category, $search_field);
-
             $index_content = array_search($order->name, array_column($response[$index_category]['content']['orders'], 'name'));
 
             if ($index_content === false) {
@@ -83,5 +63,19 @@ class PrinterController extends Controller
         return $response;
     }
 
+    public function billResponse(Order $orders,$bill)
+    {
+        $response = [];
+
+        foreach ($bill['products'] as $product) {
+            $response[] = [
+                'name' => $product->name,
+                'quantity' =>$product->quantity,
+                'price' => $product->prices
+            ];
+        }
+
+        return $response;
+    }
 }
 

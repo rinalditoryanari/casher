@@ -13,7 +13,13 @@ class OrderController extends Controller
     public function create(OrderRequest $request)
     {
         try {
-            $orders = Order::find(26);
+            $table = Table::find((int)$request['id_table']);
+            $ongoing_order = $request['order'];
+
+            $orders = $this->store($table, $ongoing_order);
+
+            $orderDetailController = new OrderDetailController();
+            $orderDetailController->store($orders, $ongoing_order);
 
             $printerController = new PrinterController();
             $response = $printerController->orderResponse($orders);
@@ -21,9 +27,11 @@ class OrderController extends Controller
             return response()->json([
                 'message' => 'Order Succesfull',
                 'status' => 'success',
-                'id_order' => $orders->id,
-                'total_prize' => $orders->total_price,
-                'printer_task' => $response,
+                'data' => [
+                    'id_order' => $orders->id,
+                    'total_prize' => $orders->total_price,
+                    'printer_task' => $response,
+                ],
             ], 201);
 
         } catch (\Throwable $th) {
@@ -67,6 +75,43 @@ class OrderController extends Controller
         ];
 
         return $calculate;
+    }
+
+    public function bill(Request $request)
+    {
+        try {
+            $id = $request->validate([
+                'order' => 'required|numeric|exists:orders,id'
+            ]);
+
+            $orders = Order::find($id['order']);
+            $detail = $orders->getAllProduct();
+
+            $calculate = $this->calculatePrize($detail);
+
+            $printerController = new PrinterController();
+            $response = $printerController->billResponse($orders, $calculate);
+
+
+            return response()->json([
+                'message' => 'Bill Generated Succesfully',
+                'status' => 'success',
+                'data' => [
+                    "Order Id" => $orders->id,
+                    "Table" => $orders->table->name,
+                    'Time' => $orders->created_at->format('Y-m-d H:i:s'),
+                    'Total Prize' => $calculate['total_price'],
+                    'Orders' => $response,
+                ],
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Error Occured',
+                'error' => $th->getMessage(),
+                'status' => 'error',
+            ], 402);
+        }
+
     }
 
     /**

@@ -21,4 +21,6 @@ Route::controller(ProductController::class)->group(function () {
 
 Route::controller(OrderController::class)->group(function () {
     Route::post('/order', 'create');
+    Route::get('/bill', 'bill');
 });
+
