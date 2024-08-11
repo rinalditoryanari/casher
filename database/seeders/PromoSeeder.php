@@ -25,9 +25,7 @@ class PromoSeeder extends Seeder
                 ]
             ]
         ];
-
-        // dd($promos);
-
+        
         foreach ($promos as $promo) {
 
             $listed_promo = new Product();
